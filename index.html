@@ -1,462 +1,151 @@
 <!DOCTYPE html>
-<html>
-<title>CSC 173 Final Project</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<style>
-body {font-family: "Times New Roman", Georgia, Serif;}
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Playfair Display";
-  letter-spacing: 5px;
-}
-</style>
-<body>
-
-<!-- Navbar (sit on top) -->
-<div class="w3-top">
-  <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:10px;">
-    <h6> CSC 173 Final Project <h6>
-    <!-- Right-sided navbar links. Hide them on small screens -->
-
-  </div>
-</div>
-
-<!-- Header -->
-<header class="w3-display-container w3-content w3-wide" style="max-width:1600px;min-width:500px" id="home">
-  <img class="w3-image" src="images/5x4 cereals.png" alt="Cereals" width="1600" height="800">
-  <div class="w3-display-bottomleft w3-padding-large w3-opacity">
-  </div>
-</header>
-
-<!-- Page content -->
-<div class="w3-content" style="max-width:1100px"> 
-
-  <!-- About Section -->
-  <div class="w3-row w3-padding-64" id="about">
-        <div class="w3-col m6 w3-padding-large w3-hide-small">
-            <img src="images/cereal-aisle.jpeg" class="w3-round w3-image w3-opacity-min" alt="cereal aisle" width="600" height="750">
-        </div>
-
-        <div class="w3-col m6 w3-padding-large">
-            <h1 class="w3-center">Interactive Design 1</h1><br>
-            <p class="w3-large">The Catering was founded in blabla by Mr. Smith in lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute iruredolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.We only use ingredients.
-        </div>
-	  
-	<hr>
-
-        <div class="w3-col m6 w3-padding-large">
-            <h1 class="w3-center">Interactive Design 2</h1><br>
-            <p class="w3-large">The Catering was founded in blabla by Mr. Smith in lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute iruredolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.We only use ingredients.
-        </div>
-
-        <div class="w3-col m6 w3-padding-large w3-hide-small">
-            <img src="images/cereal-aisle.jpeg" class="w3-round w3-image w3-opacity-min" alt="Table Setting" width="600" height="750">
-        </div>
-   </div>
-</div>
-
-</body>
-</html>
-
-
-
-
-
-<!DOCTYPE html>
-<meta charset="utf-8" />
-<head>
-  <h1>CSC 173: Assignment 3 | Interactive Design</h1>
-  <h3>This barchart displays the Cereal Nutritional Information.</h3>
-  <style>
-    
-    .rectangle {
-      fill: steelblue;
-    }
-    .rectangle:hover {
-      fill: orange;
-    }
-
-    .d3-tip {
-      line-height: 1;
-      font-weight: bold;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.8);
-      color: rgb(170, 41, 41);
-      border-radius: 2px;
-    }
-
-    /*Creates a small triangle extender for the tooltip*/
-    .d3-tip:after {
-      box-sizing: border-box;
-      display: inline;
-      font-size: 10px;
-      width: 100%;
-      line-height: 1;
-      color: rgba(0, 0, 0, 0.8);
-      content: "\25BC";
-      position: absolute;
-      text-align: center;
-    }
-
-    /*Style northward tooltips differently*/
-    .d3-tip.n:after {
-      margin: -1px 0 0 0;
-      top: 100%;
-      left: 0;
-    }
-
-    .axis {
-      font: 20px sans-serif;
-    }
-    
-
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-  </style>
-</head>
-<body>
-  
-    <p>You can click at the drop down menu to view different categories of nutrional information of the cereals.</p>
-  <div id="drop"></div>
-  <script src="https://d3js.org/d3.v3.min.js"></script>
-  <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-  <script>
-    var margin = { top: 50, right: 40, bottom: 200, left: 100 },
-      width = 1200 - margin.left - margin.right,
-      height = 610 - margin.top - margin.bottom;
-
-    var svg = d3
-      .select("body")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    d3.csv("cerealdata.csv", function (error, data) {
-      // filter year
-      var data = data.filter(function (d) {
-        return d.Year == "2012";
-      });
-      // Get every column value
-      var elements = Object.keys(data[0]).filter(function (d) {
-        return (d != "Year") & (d != "State");
-      });
-      var selection = elements[0];
-
-      var y = d3.scale
-        .linear()
-        .domain([
-          0,
-          d3.max(data, function (d) {
-            return +d[selection];
-          }),
-        ])
-        .range([height, 0]);
-
-      var x = d3.scale
-        .ordinal()
-        .domain(
-          data.map(function (d) {
-            return d.State;
-          })
-        )
-        .rangeBands([0, width], 0.1);
-
-      var xAxis = d3.svg.axis().scale(x).orient("bottom");
-
-      var yAxis = d3.svg.axis().scale(y).orient("left");
-
-        
-        svg.append("text")      // text label for the x axis
-        .attr("x", 500 )
-        .attr("y",  540 )
-        .style("font-size", "30px") 
-        .style("text-anchor", "middle")
-        .text("Cereal name");
- 
-  // Add the text label for the Y axis
-    svg.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 10 - margin.left)
-        .attr("x",0 - (height / 2))
-            .style("font-size", "30px") 
-
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .text("Value");
-        
-        
-        
-      var tip = d3
-        .tip()
-        .attr("class", "d3-tip")
-        .offset([-10, 0])
-        .html(function (d) {
-          return "<strong>Value:</strong> <span style='color:red'>" + d[selection] + " <strong>g</strong></span>";
-        });
-
-      svg
-        .append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .selectAll("text")
-        .style("font-size", "20px")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", "-.100em")
-        .attr("transform", "rotate(-90)");
-
-      svg.append("g").attr("class", "y axis").call(yAxis);
-
-      svg
-        .selectAll("rectangle")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("class", "rectangle d3-tip")
-        .attr("width", x.rangeBand())
-
-        .attr("height", function (d) {
-          return height - y(+d[selection]);
-        })
-       
-        .attr("x", function (d, i) {
-          return (width / data.length) * i;
-        })
-        .attr("y", function (d) {
-          return y(+d[selection]);
-        })
-        .on("mouseover", function(d) {
-        d3.select(this).style("cursor", "pointer")} )
-        .append("title")    
-		.text(function(d){
-			return d.State + " : " + d[selection];
-		});
-
-      var selector = d3
-        .select("#drop")
-        .append("select")
-        .attr("id", "dropdown")
-        .on("change", function (d) {
-          selection = document.getElementById("dropdown");
-
-          y.domain([
-            0,
-            d3.max(data, function (d) {
-              return +d[selection.value];
-            }),
-          ]);
-
-          yAxis.scale(y);
-
-          d3.selectAll(".rectangle")
-            .transition()
-            .attr("height", function (d) {
-              return height - y(+d[selection.value]);
-            })
-            .attr("x", function (d, i) {
-              return (width / data.length) * i;
-            })
-            .attr("y", function (d) {
-              return y(+d[selection.value]);
-            })
-            .ease("linear")
-            .select("title")
-            .text(function (d) {
-              return d.State + " : " + d[selection.value];
-            });
-
-          d3.selectAll("g.y.axis").transition().call(yAxis);
-        });
-      svg.call(tip);
-
-      selector
-        .selectAll("option")
-        .data(elements)
-        .enter()
-        .append("option")
-        .attr("value", function (d) {
-          return d;
-        })
-        
-        .text(function (d) {
-          return d;
-        });   
-    
-    });
-  </script>
-  
-</body>
-
-#cereal.tsv
-Year	State	Calories	Protein	Fat	Sodium	Fiber	Carbo	Sugars	Potassium	Vitamins	Cups	Rating
-2012	100% Bran	70	4	1	130	10	5	6	280	25	0.33	68.40
-2012	Apple Jacks	110	2	0	125	1	11	14	30	25	1	33.17
-2012	Cheerios	110	6	2	290	2	17	1	105	25	1.25	50.76
-2012	Cocoa Puffs	110	1	1	180	0	12	13	55	25	1	22.73
-2012	Corn Flakes	100	2	0	290	1	21	2	35	25	1	45.86
-2012	Corn Pops	110	1	0	90	1	13	12	20	25	1	35.78
-2012	Froot Loops	110	2	1	125	1	11	13	30	25	1	1
-2012	Frosted Flakes	110	1	0	200	1	14	11	25	25	0.75	31.43
-2012	Fruity Pebbles	110	1	1	135	0	13	12	25	25	0.75	28.02
-2012	Honey Nut Cheerios	110	3	1	250	1.5	11.5	10	90	25	0.75	31.07
-2012	Raisin Bran	120	3	1	210	5	14	12	240	25	0.75	39.25
-2012	Rice Krispies	110	2	0	290	0	22	3	35	25	1	40.56
-2012	Special K	110	6	0	230	1	16	3	55	25	1	53.13
-
-
-
-
-
-
-<!DOCTYPE html>
 <meta charset="utf-8">
-  <h1>Industry revenue of “breakfast cereal manufacturing“ in the U.S. 2012-2024
- </h1>
-<h3>
-This statistic shows the revenue of the industry “breakfast cereal manufacturing“ in the U.S. from 2012 to 2017, with a forecast to 2024. It is projected that the revenue of breakfast cereal manufacturing in the U.S. will amount to approximately 10,3 billion U.S. Dollars by 2024.
-</h3>
-<style> /* set the CSS */
+<head>
+<style>
 
-body { font: 15px Arial;}
-
-path { 
-    stroke: orange;
-    stroke-width: 2;
-    fill: none;
+.rectangle {
+	fill: steelblue;
+}
+.rectangle:hover {
+	fill: orange;
+}
+.axis {
+  font: 10px sans-serif;
 }
 
 .axis path,
 .axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
-
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 60px;					
-    height: 28px;					
-    padding: 2px;				
-    font: 22px sans-serif;		
-    background: yellow;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;			
-}
-
 </style>
+</head>
 <body>
-
-<!-- load the d3.js library -->    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
-
+<div id="drop" align=center></div>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script>
 
-// Set the dimensions of the canvas / graph
-var margin = {top: 50, right: 20, bottom: 30, left: 200},
-    width = 800 - margin.left - margin.right,
-    height = 370 - margin.top - margin.bottom;
+var margin = {top: 80, right: 180, bottom: 80, left: 180},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-// Parse the date / time
-var parseDate = d3.time.format("%Y").parse;
-var formatTime = d3.time.format("%Y");
+var svg = d3.select("body").append("svg")
+	.attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Set the ranges
-var x = d3.time.scale().range([0, width]);
-var y = d3.scale.linear().range([height, 0]);
+d3.tsv("VotingInformation.tsv", function(error, data){
 
-    
-    
-    
-    
-// Define the axes
-var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(13);
+	// filter year
+	var data = data.filter(function(d){return d.Year == '2012';});
+	// Get every column value
+	var elements = Object.keys(data[0])
+		.filter(function(d){
+			return ((d != "Year") & (d != "State"));
+		});
+	var selection = elements[0];
 
-var yAxis = d3.svg.axis().scale(y)
-    .orient("left").ticks(5);
+	var y = d3.scale.linear()
+			.domain([0, d3.max(data, function(d){
+				return +d[selection];
+			})])
+			.range([height, 0]);
 
-   
-    
-    
-    
-    
-// Define the line
-var valueline = d3.svg.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.close); });
+	var x = d3.scale.ordinal()
+			.domain(data.map(function(d){ return d.State;}))
+			.rangeBands([0, width]);
 
-// Define the div for the tooltip
-var div = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
 
-// Adds the svg canvas
-var svg = d3.select("body")
-    .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+	var xAxis = d3.svg.axis()
+		.scale(x)
+	    .orient("bottom");
 
-// Get the data
-d3.csv("data.csv", function(error, data) {
-    data.forEach(function(d) {
-        d.date = parseDate(d.date);
-        d.close = +d.close;
-    });
+	var yAxis = d3.svg.axis()
+		.scale(y)
+	    .orient("left");
 
-    // Scale the range of the data
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain([0, d3.max(data, function(d) { return d.close; })]);
+	svg.append("g")
+    	.attr("class", "x axis")
+    	.attr("transform", "translate(0," + height + ")")
+    	.call(xAxis)
+    	.selectAll("text")
+    	.style("font-size", "8px")
+      	.style("text-anchor", "end")
+      	.attr("dx", "-.8em")
+      	.attr("dy", "-.55em")
+      	.attr("transform", "rotate(-90)" );
 
-    // Add the valueline path.
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data));
 
-    // Add the scatterplot
-    svg.selectAll("dot")	
-        .data(data)			
-    .enter().append("circle")								
-        .attr("r", 5)		
-        .attr("cx", function(d) { return x(d.date); })		 
-        .attr("cy", function(d) { return y(d.close); })		
-        .on("mouseover", function(d) {		
-            div.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            div	.html(formatTime(d.date) + "<br/>"  + d.close)	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })					
-        .on("mouseout", function(d) {		
-            div.transition()		
-                .duration(500)		
-                .style("opacity", 0);	
-        });
+ 	svg.append("g")
+    	.attr("class", "y axis")
+    	.call(yAxis);
 
-    // Add the X Axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+	svg.selectAll("rectangle")
+		.data(data)
+		.enter()
+		.append("rect")
+		.attr("class","rectangle")
+		.attr("width", width/data.length)
+		.attr("height", function(d){
+			return height - y(+d[selection]);
+		})
+		.attr("x", function(d, i){
+			return (width / data.length) * i ;
+		})
+		.attr("y", function(d){
+			return y(+d[selection]);
+		})
+		.append("title")
+		.text(function(d){
+			return d.State + " : " + d[selection];
+		});
 
-    // Add the Y Axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
+	var selector = d3.select("#drop")
+    	.append("select")
+    	.attr("id","dropdown")
+    	.on("change", function(d){
+        	selection = document.getElementById("dropdown");
+
+        	y.domain([0, d3.max(data, function(d){
+				return +d[selection.value];})]);
+
+        	yAxis.scale(y);
+
+        	d3.selectAll(".rectangle")
+           		.transition()
+	            .attr("height", function(d){
+					return height - y(+d[selection.value]);
+				})
+				.attr("x", function(d, i){
+					return (width / data.length) * i ;
+				})
+				.attr("y", function(d){
+					return y(+d[selection.value]);
+				})
+           		.ease("linear")
+           		.select("title")
+           		.text(function(d){
+           			return d.State + " : " + d[selection.value];
+           		});
+      
+           	d3.selectAll("g.y.axis")
+           		.transition()
+           		.call(yAxis);
+
+         });
+
+    selector.selectAll("option")
+      .data(elements)
+      .enter().append("option")
+      .attr("value", function(d){
+        return d;
+      })
+      .text(function(d){
+        return d;
+      })
+
 
 });
 
