@@ -12,12 +12,9 @@
       fill: orange;
     }
 
-    
-
     .axis {
       font: 20px sans-serif;
     }
-    
 
     .axis path,
     .axis line {
@@ -119,8 +116,7 @@
         .enter()
         .append("rect")
         .attr("class", "rectangle")
-        .attr("width", width/data.length)
-
+        .attr("width", x.rangeBand())
         .attr("height", function (d) {
           return height - y(+d[selection]);
         })
